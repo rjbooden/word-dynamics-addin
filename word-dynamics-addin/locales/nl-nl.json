@@ -1,0 +1,23 @@
+{
+    "title": "Word Dynamics Add-In",
+    "unableToLoadSettings": "Add-In instellingen konden niet worden geladen.",
+    "pleaseSideload": "Laad de Add-In binnen Word om de inhoud te zien.",
+    "clickFieldToAdd": "Klik het veld om deze toe te voegen op de huidige locatie:",
+    "failedAddingContentControls": "Fout bij het toevoegen van content controls.",
+    "failedRetrievingIncludedEntity": "Fout bij het ophalen van ingevoegde entiteit gegevens.",
+    "failedSettingContentControlValues": "Fout bij het instellen van content control waardes.",
+    "searchNotCompleted": "Zoeken kon niet worden uitgevoerd.",
+    "search": "Zoeken",
+    "searchFor": "Zoeken binnen",
+    "results": "Resultaten:",
+    "unableLoadingSnippets": "Kon de snippets niet laden",
+    "unableStoringSnippet": "Fout bij het opslaan van de snippet",
+    "unableDeletingSnippet": "Fout bij verwijderen snippet",
+    "useSnippet": "Gebruik snippet",
+    "useSnippets": "Gebruik snippets",
+    "selectionDialogTitle": "Selectie ontbreekt",
+    "close": "Sluiten",
+    "selectContent": "Selecteer content in het Word document.",
+    "createSnippet": "Aanmaken snippet",
+    "newSnippetName": "Nieuwe snippet naam:"
+}

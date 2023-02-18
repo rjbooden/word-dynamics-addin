@@ -1,0 +1,110 @@
+[
+    {
+        "uniqueName": "contact",
+        "displayName": "Contact",
+        "tableName": "contacts",
+        "labelField": "fullname",
+        "fields": [
+            {
+                "displayName": "Full name",
+                "fieldName": "fullname"
+            },
+            {
+                "displayName": "First name",
+                "fieldName": "firstname"
+            },
+            {
+                "displayName": "Last name",
+                "fieldName": "lastname"
+            },
+            {
+                "displayName": "Address",
+                "fieldName": "address1_line1"
+            },
+            {
+                "displayName": "Postal code",
+                "fieldName": "address1_postalcode"
+            },
+            {
+                "displayName": "City",
+                "fieldName": "address1_city"
+            },
+            {
+                "displayName": "Telephone",
+                "fieldName": "telephone1"
+            }
+        ],
+        "searchField": "fullname",
+        "autoSearchEnabled": true,
+        "topLimit": 40,
+        "iconName": "Contact",
+        "includeEntity" : [{
+            "uniqueName": "useraccount",
+            "sourceField": "_parentcustomerid_value",
+            "targetField": "accountid"
+        }]
+    },
+    {
+        "uniqueName": "account",
+        "displayName": "Account",
+        "tableName": "accounts",
+        "labelField": "name",
+        "fields": [
+            {
+                "displayName": "Name",
+                "fieldName": "name"
+            },
+            {
+                "displayName": "Address",
+                "fieldName": "address1_line1"
+            },
+            {
+                "displayName": "Postal code",
+                "fieldName": "address1_postalcode"
+            },
+            {
+                "displayName": "City",
+                "fieldName": "address1_city"
+            },
+            {
+                "displayName": "Telephone",
+                "fieldName": "telephone1"
+            },
+            {
+                "displayName": "Url",
+                "fieldName": "websiteurl"
+            }
+        ],
+        "searchField": "name",
+        "autoSearchEnabled": true,
+        "iconName": "DocumentSet"
+    },
+    {
+        "uniqueName": "useraccount",
+        "displayName": "Account",
+        "tableName": "accounts",
+        "labelField": "name",
+        "isHidden": true,
+        "fields": [
+            {
+                "displayName": "Naam",
+                "fieldName": "name"
+            },
+            {
+                "displayName": "Adres",
+                "fieldName": "address1_line1"
+            },
+            {
+                "displayName": "Postcode",
+                "fieldName": "address1_postalcode"
+            },
+            {
+                "displayName": "Plaats",
+                "fieldName": "address1_city"
+            }
+        ],
+        "searchField": "name",
+        "autoSearchEnabled": true,
+        "iconName": "DocumentSet"
+    }
+]

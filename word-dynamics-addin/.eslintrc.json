@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "office-addins"
+  ],
+  "extends": [
+    "plugin:office-addins/react"
+  ],
+  "parserOptions": {
+    "tsconfigRootDir": "./word-dynamics-addin"
+  }
+}

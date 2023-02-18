@@ -1,0 +1,23 @@
+{
+    "title": "Word Dynamics Add-In",
+    "unableToLoadSettings": "Unable to load add-in settings.",
+    "pleaseSideload": "Please sideload your add-in to see the app body.",
+    "clickFieldToAdd": "Click field to add at cursor location:",
+    "failedAddingContentControls": "Failed adding content controls.",
+    "failedRetrievingIncludedEntity": "Failed retrieving included entity data.",
+    "failedSettingContentControlValues": "Failed setting content control values.",
+    "searchNotCompleted": "Search could not be completed.",
+    "search": "Search",
+    "searchFor": "Search for",
+    "results": "Results:",
+    "unableLoadingSnippets": "Unable to load snippets",
+    "unableStoringSnippet": "Unable to store your snippet",
+    "unableDeletingSnippet": "Unable to delete snippet",
+    "useSnippet": "Use snippet",
+    "useSnippets": "Use snippets",
+    "selectionDialogTitle": "Missing Selection",
+    "close": "Close",
+    "selectContent": "Please select content in the Word document.",
+    "createSnippet": "Create Snippet",
+    "newSnippetName": "New snippet name:"  
+}
