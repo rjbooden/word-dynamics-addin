@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Dialog, DialogFooter, DialogType, IconButton, PrimaryButton, Spinner, SpinnerSize, Stack, TextField } from "@fluentui/react";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { strings } from "../../services/LocaleService";
 import { SettingsService, Snippet } from "../../services/SettingsService";
 import Wait from "../../helper/Wait";
@@ -10,41 +10,29 @@ export interface SnippetProps {
 	onError: (errorMessage: string, errorInfo?: string) => void;
 }
 
-export interface SnippetState {
-	newSnippetName: string;
-	snippets: Snippet[];
-	isLoading: boolean;
-	isSaving: boolean;
-	hideDialog: boolean;
-}
+export default function SnippetsView(props: SnippetProps) {
+	let isWorking: boolean = false;
 
-export default class SnippetsView extends React.Component<SnippetProps, SnippetState> {
-	private isWorking: boolean = false;
+	const [newSnippetName, setSnippetName] = useState<string>('');
+	const [snippets, setSnippets] = useState<Snippet[]>([]);
+	const [isLoading, setLoading] = useState<boolean>(true);
+	const [isSaving, setSaving] = useState<boolean>(false);
+	const [hideDialog, setHideDialog] = useState<boolean>(true);
 
-	constructor(props, state) {
-		super(props, state);
-		this.state = {
-			newSnippetName: '',
-			snippets: [],
-			isLoading: true,
-			isSaving: false,
-			hideDialog: true,
-		}
-	}
-
-	componentDidMount(): void {
+	useEffect(() => {
 		SettingsService.loadSnippets().then((snippets) => {
-			this.setState({ snippets, isLoading: false });
+			setSnippets(snippets);
+			setLoading(false);
 		}).catch((reason) => {
 			// eslint-disable-next-line no-undef
 			console.log(reason);
-			this.props.onError(strings.unableLoadingSnippets, reason);
-			this.setState({ isLoading: false });
+			props.onError(strings.unableLoadingSnippets, reason);
+			setLoading(false);
 		});
-	}
+	}, []);
 
 	// eslint-disable-next-line no-undef
-	ensureFullyIncludedContentControls = async (context: Word.RequestContext, range: Word.Range) => {
+	const ensureFullyIncludedContentControls = async (context: Word.RequestContext, range: Word.Range) => {
 		context.load(range, ['contentControls', 'contentControls.items', 'contentControls.items.length']);
 		await context.sync();
 
@@ -67,11 +55,11 @@ export default class SnippetsView extends React.Component<SnippetProps, SnippetS
 			await context.sync();
 		}
 		return range;
-	}
+	};
 
-	onCreateSnippet = () => {
-		this.setState({ isSaving: true });
-		this.isWorking = true;
+	const onCreateSnippet = () => {
+		setSaving(true);
+		isWorking = true;
 		// eslint-disable-next-line no-undef
 		Word.run(async (context) => {
 			try {
@@ -83,68 +71,72 @@ export default class SnippetsView extends React.Component<SnippetProps, SnippetS
 
 				// eslint-disable-next-line office-addins/load-object-before-read
 				if (!range.isEmpty) {
-					range = await this.ensureFullyIncludedContentControls(context, range);
+					range = await ensureFullyIncludedContentControls(context, range);
 					const ooxml = range.getOoxml();
 					await context.sync();
-					let snippets: Snippet[] = JSON.parse(JSON.stringify(this.state.snippets));
 					// eslint-disable-next-line office-addins/load-object-before-read
-					snippets.push({ title: this.state.newSnippetName, content: ooxml.value });
-					SettingsService.saveSnippets(snippets).then(() => {
-						this.setState({ snippets, isSaving: false, newSnippetName: '' });
-						this.props.onError(null);
-						this.isWorking = false;
+					let newSnippets: Snippet[] = JSON.parse(JSON.stringify(snippets));
+					// eslint-disable-next-line office-addins/load-object-before-read
+					snippets.push({ title: newSnippetName, content: ooxml.value });
+					SettingsService.saveSnippets(newSnippets).then(() => {
+						setSnippets(snippets);
+						setSaving(false);
+						setSnippetName('');
+						props.onError(null);
+						isWorking = false;
 					}).catch((reason) => {
 						// eslint-disable-next-line no-undef
 						console.log(reason);
-						this.props.onError(strings.unableStoringSnippet, reason);
-						this.setState({ isSaving: false });
-						this.isWorking = false;
+						props.onError(strings.unableStoringSnippet, reason);
+						setSaving(false);
+						isWorking = false;
 					});
 				}
 				else {
-					this.setState({ isSaving: false, hideDialog: false });
-					this.isWorking = false;
+					setSaving(false);
+					setHideDialog(false);
+					isWorking = false;
 				}
 			} catch (e) {
 				// eslint-disable-next-line no-undef
 				console.log(e);
-				this.props.onError(e);
-				this.setState({ isSaving: false });
-				this.isWorking = false;
+				props.onError(e);
+				setSaving(false);
+				isWorking = false;
 			}
 		});
 	}
 
-	closeDialog = () => {
-		this.setState({ hideDialog: true })
+	const closeDialog = () => {
+		setHideDialog(true);
 	}
 
-	deleteSnippet = (s: Snippet) => {
+	const deleteSnippet = (s: Snippet) => {
 		const handleDelete = () => {
-			this.isWorking = true;
-			let deepCopy: Snippet[] = JSON.parse(JSON.stringify(this.state.snippets));
-			let snippets = deepCopy.filter((item) => { return item.title != s.title });
-			SettingsService.saveSnippets(snippets).then(() => {
-				this.setState({ snippets });
-				this.props.onError(null);
-				this.isWorking = false;
+			isWorking = true;
+			let deepCopy: Snippet[] = JSON.parse(JSON.stringify(snippets));
+			let newSnippets = deepCopy.filter((item) => { return item.title != s.title });
+			SettingsService.saveSnippets(newSnippets).then(() => {
+				setSnippets(newSnippets);
+				props.onError(null);
+				isWorking = false;
 			}).catch((reason) => {
-				this.setState({ snippets }); // to clear deleting spinner
+				setSnippets(newSnippets); // to clear deleting spinner
 				// eslint-disable-next-line no-undef
 				console.log(reason);
-				this.props.onError(strings.unableDeletingSnippet, reason);
-				this.isWorking = false;
+				props.onError(strings.unableDeletingSnippet, reason);
+				isWorking = false;
 			});
 		};
-		if (this.isWorking) { // handle multiple deletes sequentially
+		if (isWorking) { // handle multiple deletes sequentially
 			Wait(200, 80, () => {
-				return this.isWorking;
+				return isWorking;
 			}).then(() => {
 				handleDelete();
 			}).catch((reason) => {
 				// eslint-disable-next-line no-undef
 				console.log(reason);
-				this.props.onError(strings.unableDeletingSnippet, reason);
+				props.onError(strings.unableDeletingSnippet, reason);
 			});
 		}
 		else {
@@ -152,7 +144,7 @@ export default class SnippetsView extends React.Component<SnippetProps, SnippetS
 		}
 	}
 
-	insertSnippet = (Snippet: Snippet, notifyLoaded) => {
+	const insertSnippet = (Snippet: Snippet, notifyLoaded) => {
 		// eslint-disable-next-line no-undef
 		Word.run(async (context) => {
 			try {
@@ -167,78 +159,75 @@ export default class SnippetsView extends React.Component<SnippetProps, SnippetS
 			} catch (e) {
 				// eslint-disable-next-line no-undef
 				console.log(e);
-				this.props.onError(e);
+				props.onError(e);
 				notifyLoaded();
 			}
 		});
 	}
 
-	render() {
+	let snippetItems = snippets.map((s, i) => {
+		return (<ClickableListItem
+			label={s.title}
+			iconName="Paste"
+			key={s.title + i}
+			showLoading={true}
+			onDelete={() => { deleteSnippet(s); }}
+			onClick={(notifyLoaded) => { insertSnippet(s, notifyLoaded); }} />);
+	});
 
-		let snippetItems = this.state.snippets.map((s, i) => {
-			return (<ClickableListItem
-				label={s.title}
-				iconName="Paste"
-				key={s.title + i}
-				showLoading={true}
-				onDelete={() => { this.deleteSnippet(s); }}
-				onClick={(notifyLoaded) => { this.insertSnippet(s, notifyLoaded); }} />);
-		});
+	const enableCopy = newSnippetName != ''
+		&& (snippets.length === 0
+			|| null == (snippets.find((s) => {
+				return s.title == newSnippetName
+			})));
 
-		const enableCopy = this.state.newSnippetName != ''
-			&& (this.state.snippets.length === 0
-				|| null == (this.state.snippets.find((s) => {
-					return s.title == this.state.newSnippetName
-				})));
+	let useText = snippetItems.length == 1 ? strings.useSnippet : strings.useSnippets
 
-		let useText = snippetItems.length == 1 ? strings.useSnippet : strings.useSnippets
+	const dialogContentProps = {
+		type: DialogType.normal,
+		title: strings.selectionDialogTitle,
+		closeButtonAriaLabel: strings.close,
+		subText: strings.selectContent,
+	};
 
-		const dialogContentProps = {
-			type: DialogType.normal,
-			title: strings.selectionDialogTitle,
-			closeButtonAriaLabel: strings.close,
-			subText: strings.selectContent,
-		};
-
-		return (
-			<main className="ms-welcome__main">
-				<h2 className="ms-font-m ms-fontWeight-semilight ms-fontColor-neutralPrimary ms-u-slideUpIn20">{strings.createSnippet}</h2>
-				<Stack tokens={{ childrenGap: 8 }} className="snippet-stack" horizontal verticalAlign="baseline">
-					<TextField label={strings.newSnippetName} value={this.state.newSnippetName} className="snippet-name" onChange={(_e, v) => { this.setState({ newSnippetName: v }) }} />
-					{
-						this.state.isSaving ?
-							<Spinner size={SpinnerSize.small} className="saving-spinner" />
-							: <IconButton
-								iconProps={{ iconName: 'SaveTemplate' }}
-								onClick={this.onCreateSnippet}
-								disabled={!enableCopy}
-								className="snippet-button"
-							/>
-					}
-				</Stack>
-				<Dialog
-					hidden={this.state.hideDialog}
-					onDismiss={this.closeDialog}
-					dialogContentProps={dialogContentProps}
-					modalProps={{ isBlocking: true }}
-				>
-					<DialogFooter>
-						<PrimaryButton onClick={this.closeDialog} text="Close" />
-					</DialogFooter>
-				</Dialog>
-				{snippetItems.length > 0 ?
-					<h2 className="ms-font-m ms-fontWeight-semilight ms-fontColor-neutralPrimary ms-u-slideUpIn20">{useText}</h2>
-					: null}
-				<ul className="ms-List ms-welcome__features ms-u-slideUpIn10">
-					{snippetItems}
-				</ul>
+	return (
+		<main className="ms-welcome__main">
+			<h2 className="ms-font-m ms-fontWeight-semilight ms-fontColor-neutralPrimary ms-u-slideUpIn20">{strings.createSnippet}</h2>
+			<Stack tokens={{ childrenGap: 8 }} className="snippet-stack" horizontal verticalAlign="baseline">
+				<TextField label={strings.newSnippetName} value={newSnippetName} className="snippet-name" onChange={(_e, v) => { setSnippetName(v) }} />
 				{
-					this.state.isLoading ?
-						<Spinner size={SpinnerSize.large} className="loading-spinner" />
-						: null
+					isSaving ?
+						<Spinner size={SpinnerSize.small} className="saving-spinner" />
+						: <IconButton
+							iconProps={{ iconName: 'SaveTemplate' }}
+							onClick={onCreateSnippet}
+							disabled={!enableCopy}
+							className="snippet-button"
+						/>
 				}
-			</main>
-		);
-	}
-
+			</Stack>
+			<Dialog
+				hidden={hideDialog}
+				onDismiss={closeDialog}
+				dialogContentProps={dialogContentProps}
+				modalProps={{ isBlocking: true }}
+			>
+				<DialogFooter>
+					<PrimaryButton onClick={closeDialog} text="Close" />
+				</DialogFooter>
+			</Dialog>
+			{snippetItems.length > 0 ?
+				<h2 className="ms-font-m ms-fontWeight-semilight ms-fontColor-neutralPrimary ms-u-slideUpIn20">{useText}</h2>
+				: null}
+			<ul className="ms-List ms-welcome__features ms-u-slideUpIn10">
+				{snippetItems}
+			</ul>
+			{
+				isLoading ?
+					<Spinner size={SpinnerSize.large} className="loading-spinner" />
+					: null
+			}
+		</main>
+	);
 }
+

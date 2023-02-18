@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Progress from "./Progress";
 import { SettingsService, Entity, Mode } from "../../services/SettingsService";
@@ -18,146 +18,135 @@ export interface AppProps {
   isOfficeInitialized: boolean;
 }
 
-export interface AppState {
-  isLoading: boolean;
-  selectedEntity?: Entity;
-  modeToggleIcon: string;
-  errorMessage?: string;
-  errorInfo?: string;
-}
+export default function App(props: AppProps) {
 
-export default class App extends React.Component<AppProps, AppState> {
+  const [selectedEntity, setEntity] = useState<Entity | null>(null);
+  const [isLoading, setLoading] = useState<boolean>(true);
+  const [modeToggleIcon, setMode] = useState<Mode>(SettingsService.getMode());
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      selectedEntity: null,
-      isLoading: true,
-      modeToggleIcon: SettingsService.getMode()
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     SettingsService.getSettings().then(() => {
       // auto select first entity by default
       if (SettingsService.entities.length === 0) {
         // todo: display error message
-        this.setState({ errorMessage: strings.unableToLoadSettings, isLoading: false });
+        setErrorMessage(strings.unableToLoadSettings);
+        setLoading(false);
         return;
       }
       let selectedEntity: Entity = SettingsService.getInitialEntity();
-      this.setState({ selectedEntity, isLoading: false });
+      setEntity(selectedEntity);
+      setLoading(false);
     }).catch((reason) => {
       // eslint-disable-next-line no-undef
       console.log(reason);
-      this.setState({
-        errorMessage: strings.unableToLoadSettings,
-        errorInfo: reason,
-        isLoading: false
-      });
+      setErrorMessage(strings.unableToLoadSettings);
+      setErrorInfo(reason);
+      setLoading(false);
     });
-  }
+  }, []);
 
-  modeButtonClick = (_e, item: IContextualMenuItem) => {
+  const modeButtonClick = (_e, item: IContextualMenuItem) => {
     SettingsService.setMode(item.key as Mode);
-    this.setState({ modeToggleIcon: item.key });
+    setMode(item.key as Mode);
   }
 
-  onEntityChange = (_e, value) => {
+  const onEntityChange = (_e, value) => {
     let selectedEntity = SettingsService.entities.find((s) => { return s.uniqueName == value.key; });
     SettingsService.setInitialEnity(selectedEntity);
-    this.setState({ selectedEntity });
+    setEntity(selectedEntity);
   }
 
-  onError = (errorMessage: string, errorInfo?: string) => {
-    this.setState({ errorMessage, errorInfo });
+  const onError = (errorMessage: string, errorInfo?: string) => {
+    setErrorMessage(errorMessage);
+    setErrorInfo(errorInfo);
   }
 
-  render() {
-    const { title, isOfficeInitialized } = this.props;
+  const { title, isOfficeInitialized } = props;
 
-    if (!isOfficeInitialized) {
-      return (
-        <Progress
-          title={title}
-          logo={require("./../../../assets/logo-filled.png")}
-          message={strings.pleaseSideload}
-        />
-      );
-    }
-
-    const entityOptions: IComboBoxOption[] = [];
-    SettingsService.entities?.forEach((entity) => {
-      if (!entity.isHidden) {
-        entityOptions.push({ key: entity.uniqueName, text: entity.displayName });
-      }
-    });
-
-    const menuProps: IContextualMenuProps = {
-      items: [],
-      directionalHintFixed: true,
-      calloutProps: {
-        calloutWidth: 36
-      }
-    };
-
-    for (let item in Mode) {
-      menuProps.items.push({
-        key: item,
-        iconProps: { iconName: item },
-        onClick: this.modeButtonClick
-      });
-    }
-
+  if (!isOfficeInitialized) {
     return (
-      <div className="ms-welcome">
-        <Header logo="/assets/icon-64.png" title={this.props.title} message={strings.title} />
-        {
-          this.state.errorMessage ?
-            <ErrorBox message={this.state.errorMessage} info={this.state.errorInfo} />
-            : null
-        }
-        {
-          entityOptions.length ?
-            <div className="full-width-24">
-              <ComboBox
-                defaultSelectedKey={this.state.selectedEntity.uniqueName}
-                options={entityOptions}
-                calloutProps={{ doNotLayer: true }}
-                className="width-minus-24"
-                onChange={this.onEntityChange}
-                disabled={this.state.modeToggleIcon === Mode.Copy}
-              />
-              <IconButton
-                className="align-right"
-                iconProps={{ iconName: this.state.modeToggleIcon }}
-                menuProps={menuProps}
-                onRenderMenuIcon={() => null} />
-            </div>
-            :
-            null
-        }
-        {
-          this.state.selectedEntity ?
-            <div className="default-container">
-              {
-                this.state.modeToggleIcon === Mode.Search ?
-                  <Search selectedEntity={this.state.selectedEntity} onError={this.onError}></Search>
-                  : this.state.modeToggleIcon === Mode.Edit ?
-                    <EditList message={strings.clickFieldToAdd} onError={this.onError} entity={this.state.selectedEntity} />
-                    : this.state.modeToggleIcon === Mode.Copy ?
-                      <SnippetsView onError={this.onError}></SnippetsView>
-                      : null
-              }
-            </div>
-            : null
-        }
-        {
-          this.state.isLoading ?
-            <Spinner size={SpinnerSize.large} className="loading-spinner" />
-            : null
-        }
-      </div>
+      <Progress
+        title={title}
+        logo={require("./../../../assets/logo-filled.png")}
+        message={strings.pleaseSideload}
+      />
     );
   }
+
+  const entityOptions: IComboBoxOption[] = [];
+  SettingsService.entities?.forEach((entity) => {
+    if (!entity.isHidden) {
+      entityOptions.push({ key: entity.uniqueName, text: entity.displayName });
+    }
+  });
+
+  const menuProps: IContextualMenuProps = {
+    items: [],
+    directionalHintFixed: true,
+    calloutProps: {
+      calloutWidth: 36
+    }
+  };
+
+  for (let item in Mode) {
+    menuProps.items.push({
+      key: item,
+      iconProps: { iconName: item },
+      onClick: modeButtonClick
+    });
+  }
+
+  return (
+    <div className="ms-welcome">
+      <Header logo="/assets/icon-64.png" title={props.title} message={strings.title} />
+      {
+        errorMessage ?
+          <ErrorBox message={errorMessage} info={errorInfo} />
+          : null
+      }
+      {
+        entityOptions.length ?
+          <div className="full-width-24">
+            <ComboBox
+              defaultSelectedKey={selectedEntity.uniqueName}
+              options={entityOptions}
+              calloutProps={{ doNotLayer: true }}
+              className="width-minus-24"
+              onChange={onEntityChange}
+              disabled={modeToggleIcon === Mode.Copy}
+            />
+            <IconButton
+              className="align-right"
+              iconProps={{ iconName: modeToggleIcon }}
+              menuProps={menuProps}
+              onRenderMenuIcon={() => null} />
+          </div>
+          :
+          null
+      }
+      {
+        selectedEntity ?
+          <div className="default-container">
+            {
+              modeToggleIcon === Mode.Search ?
+                <Search selectedEntity={selectedEntity} onError={onError}></Search>
+                : modeToggleIcon === Mode.Edit ?
+                  <EditList message={strings.clickFieldToAdd} onError={onError} entity={selectedEntity} />
+                  : modeToggleIcon === Mode.Copy ?
+                    <SnippetsView onError={onError}></SnippetsView>
+                    : null
+            }
+          </div>
+          : null
+      }
+      {
+        isLoading ?
+          <Spinner size={SpinnerSize.large} className="loading-spinner" />
+          : null
+      }
+    </div>
+  );
 }
+
