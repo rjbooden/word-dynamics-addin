@@ -59,6 +59,7 @@ export class DynamicsService {
 					}
 				});
 			}
+			query = query.replace("'", "''");
 			let filter = !entity.additionalFilter ?
 				`$filter=contains(${entity.searchField},'${query}')`
 				: `$filter=(contains(${entity.searchField},'${query}') and (${entity.additionalFilter}))`;
