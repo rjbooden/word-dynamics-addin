@@ -4,8 +4,6 @@ This repository contains the client side **word-dynamics-addin** and the server 
 
 Before using, please take a look at [Use Word templates to create standardized documents](https://learn.microsoft.com/en-us/power-platform/admin/using-word-templates-dynamics-365) to see if the out of the box functionality resolves your needs. This add-in provides a different way of using data from Dynamics in a Word template. It could be useful if users create a document from a template within SharePoint for example, and if you require more ad-hoc and/or require data from multiple unrelated entities in one document, this add-in can fill that need.
 
-[[_TOC_]]
-
 ## App registration
 Create separate app registrations for development and for production. For instructions, please see: [Register an Office Add-in that uses single sign-on (SSO) with the Microsoft identity platform](https://learn.microsoft.com/en-us/office/dev/add-ins/develop/register-sso-add-in-aad-v2)
 
@@ -48,6 +46,8 @@ You will need to configure the available entities and properties in the **settin
 Besides this, optionally you can add additional locales files if needed, currently Dutch (*nl-nl.json*) and English (*en-us.json*) are supplied. These files need to be placed in the **wwwroot\locales** folder. The translation will be loaded for the language used for Office (**File > Options > Language**). If not found it will use the default language (*en-us*), if translations are missing the default (*hard coded*) translation will also be used.
 
 See configuring the entities, take a look at (while already logged in in the browser on Dynamics) **https://[yourdynamics].crm4.dynamics.com/api/data/v9.2/** to retrieve the entities, then use **https://[yourdynamics].crm4.dynamics.com/api/data/v9.2/[entityname]?$top=1** to retrieve the first instance of that entity, so you know what properties are available.
+
+> Based on your Dynamics 365 region you would need to update **crm4.dynamics.com** to the url for your region, please take a look at: [Datacenter regions](https://learn.microsoft.com/en-us/power-platform/admin/new-datacenter-regions)
 
 Only use entities and properties that are available for the users that use the add-in, as these users will only be allowed to access entities and properties they have access to.
 
