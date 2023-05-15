@@ -32,11 +32,27 @@ export default class ResultItem extends React.Component<ResultItemProps> {
     });
   }
 
+	private getFieldValue(fieldName:string, item: any) {
+		if (fieldName.indexOf(',') < 0) {
+			return item[fieldName] || " ";
+		}
+		else {
+			var values = fieldName.split(',').map((name) => {
+				return item[name]; 
+			});
+			var fieldValue = values.filter(entry => /\S/.test(entry)).join(' ').trim();
+			if (fieldValue.length == 0) {
+				fieldValue = " ";
+			}
+			return fieldValue;
+		}
+	}
+
   private async fillFields(entity: Entity, item: any, parentEntity: Entity = null) {
     for (var i = 0; i < entity.fields.length; i++) {
       let field = entity.fields[i];
       let fieldName = SettingsService.getFieldInternalName(entity, field, parentEntity);
-      let fieldValue = item[field.fieldName] || " ";
+      let fieldValue = this.getFieldValue(field.fieldName, item);
       if (field.customFieldName) { // do a override of the fieldName, but after getting the fieldValue
         fieldName = field.customFieldName;
       }
@@ -93,6 +109,6 @@ export default class ResultItem extends React.Component<ResultItemProps> {
       onClick={this.onClick}
       showLoading={true}
       iconName={this.props.entity.iconName}
-      label={this.props.item[this.props.entity.labelField]} />);
+      label={this.getFieldValue(this.props.entity.labelField, this.props.item)} />);
   }
 }

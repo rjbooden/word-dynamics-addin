@@ -52,6 +52,9 @@ export class DynamicsService {
 			let fieldNames = entity.fields.map(field => {
 				return field.fieldName;
 			});
+			if (!fieldNames.includes(entity.labelField)) {
+				fieldNames.push(entity.labelField);
+			}
 			if (entity.includeEntity) {
 				entity.includeEntity.forEach((entity) => {
 					if (!fieldNames.includes(entity.sourceField)) {
