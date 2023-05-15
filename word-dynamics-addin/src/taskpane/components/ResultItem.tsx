@@ -32,11 +32,27 @@ export default function ResultItem(props: ResultItemProps) {
     });
   }
 
+	const getFieldValue = (fieldName:string, item: any) => {
+		if (fieldName.indexOf(',') < 0) {
+			return item[fieldName] || " ";
+		}
+		else {
+			var values = fieldName.split(',').map((name) => {
+				return item[name]; 
+			});
+			var fieldValue = values.filter(entry => /\S/.test(entry)).join(' ').trim();
+			if (fieldValue.length == 0) {
+				fieldValue = " ";
+			}
+			return fieldValue;
+		}
+	}
+
   const fillFields = async (entity: Entity, item: any, parentEntity: Entity = null) => {
     for (var i = 0; i < entity.fields.length; i++) {
       let field = entity.fields[i];
       let fieldName = SettingsService.getFieldInternalName(entity, field, parentEntity);
-      let fieldValue = item[field.fieldName] || " ";
+      let fieldValue = getFieldValue(field.fieldName, item);
       if (field.customFieldName) { // do a override of the fieldName, but after getting the fieldValue
         fieldName = field.customFieldName;
       }
@@ -93,5 +109,5 @@ export default function ResultItem(props: ResultItemProps) {
     onClick={onClick}
     showLoading={true}
     iconName={props.entity.iconName}
-    label={props.item[props.entity.labelField]} />);
+    label={getFieldValue(props.entity.labelField, props.item)} />);
 }

@@ -3,3 +3,4 @@
 */node_modules
 */dist
 appsettings.Development.json
+word-dynamics-api/wwwroot

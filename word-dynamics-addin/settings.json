@@ -3,11 +3,11 @@
         "uniqueName": "contact",
         "displayName": "Contact",
         "tableName": "contacts",
-        "labelField": "fullname",
+        "labelField": "firstname,lastname",
         "fields": [
             {
                 "displayName": "Full name",
-                "fieldName": "fullname"
+                "fieldName": "firstname,lastname"
             },
             {
                 "displayName": "First name",

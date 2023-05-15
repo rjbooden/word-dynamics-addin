@@ -61,7 +61,7 @@ Below you will find the description of the settings:
 | displayName | string | The display name of the entity show in the entity selection dropdown |
 | tableName | string | The name of the table in the [Dataverse API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/overview) (these are pluralized) |
 | isHidden | boolean (optional) | Indicates if the entity should be hidden in the entity picker. This can be used for include entities that use different settings or should not be available separately |
-| labelField | string | The field name to be used for the value that is displayed for each found item |
+| labelField | string | The field name to be used for the value that is displayed for each found item (use , separated field names to join multiple field values separated by a space, for example: firstname,lastname) |
 | fields | EntityField[] | Array of fields that are available for selection, see EntityField |
 | searchField | string | The field that will be search on, should be a text field in Dynamics |
 | additionalFilter | string (optional) | This can contain an additional odata filter expression that is used for this entity |
@@ -76,7 +76,7 @@ Below you will find the description of the settings:
 | Property | Type | Description |
 |----------|------|-------------|
 | displayName | string | The display name of the property as shown in the property picker and used in the title of the ContentControl in Word |
-| fieldName | string | The field name of the property of the entity |
+| fieldName | string | The field name of the property of the entity (use , separated field names to join multiple field values separated by a space, for example: firstname,lastname) |
 | customFieldName | string (optional) | This can be set to a custom field name, so existing content controls can be targetted, an also you are able to use this from multiple entities, so it can override fields, as by default the entity unique name will be included |
 | containsHtml | boolean (optional) | Set true if the field contains html content |
 
