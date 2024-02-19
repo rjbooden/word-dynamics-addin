@@ -96,9 +96,10 @@ For deployment first do a release build of the front-end code, first `cd` into t
 
 Then on the dotnet side, `cd` into the api folder, then:
 
+`dotnet build --configuration Release`
 `dotnet publish --configuration Release`
 
-Then copy the files contained in the **..\word-dynamics-api\bin\Release\net7.0\publish\\** path that is displayed in the wwwroot folder of your web application, and update the appsettings.json and manifest.xml if needed.
+Then copy the files contained in the **..\word-dynamics-api\bin\Release\net8.0\publish\\** path that is displayed in the wwwroot folder of your web application, and update the appsettings.json and manifest.xml if needed.
 
 To make the add-in available for office, please read: [Recommended approach for deploying Office Add-ins and Deploy an Office Add-in using the admin center](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/test-and-deploy-microsoft-365-apps?view=o365-worldwide#recommended-approach-for-deploying-office-add-ins)
 
