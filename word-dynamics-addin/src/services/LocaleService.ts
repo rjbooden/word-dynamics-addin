@@ -56,7 +56,7 @@ export class LocaleService {
 			fetch(`/locales/${locale.toLowerCase()}.json`).then((response) => {
 				if (response.status == 200) {
 					response.json().then((jsonObject) => {
-						for (var property in strings) {
+						for (let property in strings) {
 							let locValue = jsonObject[property] as string;
 							if (locValue) {
 								strings[property] = locValue;

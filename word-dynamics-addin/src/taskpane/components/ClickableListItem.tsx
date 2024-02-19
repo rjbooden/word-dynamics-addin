@@ -6,7 +6,7 @@ export interface ClickableListItemProps {
 	label: string;
 	iconName?: string;
 	showLoading?: boolean;
-	onClick: (notifyLoaded?: () => void) => void;
+	onClick?: (notifyLoaded?: () => void) => void;
 	onDelete?: () => void;
 }
 
@@ -16,29 +16,32 @@ export interface ClickableListItemState {
 
 export default class ClickableListItem extends React.Component<ClickableListItemProps, ClickableListItemState> {
 
-	constructor(props, state) {
+	constructor(props: ClickableListItemProps, state: ClickableListItemState) {
 		super(props, state);
 		this.state = { isLoading: false };
 	}
 
-	notifyLoaded = () => {
+	notifyLoaded = (): void => {
 		if (this.props.showLoading) {
 			this.setState({ isLoading: false });
 		}
 	}
 
-	onClick = () => {
-		if (this.props.showLoading) {
-			this.setState({ isLoading: true });
+	onClick = (): void => {
+		if (this.props.onClick) {
+			if (this.props.showLoading) {
+				this.setState({ isLoading: true });
+			}
+			this.props.onClick(this.notifyLoaded);
 		}
-		this.props.onClick(this.notifyLoaded);
 	}
 
-	render() {
+	// eslint-disable-next-line no-undef
+	render(): JSX.Element {
 		const { label, iconName } = this.props;
 
 		return (
-			<li className="ms-ListItem clickable" onClick={this.onClick}>
+			<li className={`ms-ListItem ${this.props.onClick ? 'clickable' : ''}`}  onClick={this.onClick}>
 				{iconName && !this.state.isLoading ? <i className={`ms-Icon ms-Icon--${iconName}`}></i> : null}
 				{this.state.isLoading ? <Spinner size={SpinnerSize.xSmall} className="item-loading-spinner" /> : null}
 				<span className="ms-font-m ms-fontColor-neutralPrimary item-label">{label}</span>

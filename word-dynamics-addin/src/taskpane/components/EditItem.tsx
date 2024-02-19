@@ -14,7 +14,7 @@ export interface EditItemProps {
 
 export default class EditItem extends React.Component<EditItemProps> {
 
-	onClick = async (notifyLoaded) => {
+	onClick = async (notifyLoaded: () => void): Promise<void> => {
 		// eslint-disable-next-line no-undef
 		return Word.run(async (context) => {
 
@@ -59,7 +59,8 @@ export default class EditItem extends React.Component<EditItemProps> {
 			});
 	}
 
-	render() {
+	// eslint-disable-next-line no-undef
+	render(): JSX.Element {
 		return (<ClickableListItem
 			onClick={this.onClick}
 			showLoading={true}

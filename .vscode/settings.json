@@ -1,5 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.insertSpaces": false,
-  "editor.detectIndentation": false
+	"editor.detectIndentation": false,
+	"appService.preDeployTask": "publish-release",
+	"appService.deploySubpath": "word-dynamics-api/bin/Release/net8.0/publish"
 }

@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/word-dynamics-api/bin/Debug/net7.0/word-dynamics-api.dll",
+            "program": "${workspaceFolder}/word-dynamics-api/bin/Debug/net8.0/word-dynamics-api.dll",
             "args": [],
             "cwd": "${workspaceFolder}/word-dynamics-api",
             "stopAtEntry": false,

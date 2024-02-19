@@ -12,7 +12,7 @@ public static class HeadersHelper
     public static void CopyHeaders(this HttpResponseHeaders source, IHeaderDictionary target) {
         foreach(var header in source) {
             if (HeadersToCopy.Contains(header.Key, StringComparer.InvariantCultureIgnoreCase)) {   
-                target.Add(header.Key, new StringValues(header.Value?.ToArray()));
+                target.Append(header.Key, new StringValues(header.Value?.ToArray()));
             }
         }
     }

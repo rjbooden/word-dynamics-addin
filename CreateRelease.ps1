@@ -2,10 +2,12 @@
 cd .\word-dynamics-addin
 npm run update-addin
 cd ..\word-dynamics-api
+dotnet clean --configuration Release
+dotnet build --configuration Release
 dotnet publish --configuration Release
 cd ..
 
-$publishPath = ".\word-dynamics-api\bin\Release\net7.0\publish"
+$publishPath = ".\word-dynamics-api\bin\Release\net8.0\publish"
 
 $manifest = Get-Content -Path "$publishPath\wwwroot\manifest.xml"
 [xml]$manifestXml = $manifest
